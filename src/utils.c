@@ -19,9 +19,11 @@ typedef unsigned int u_int;
 #include <sys/socket.h>
 #include <linux/if.h>
 #include "../include/utils.h"
+#include "../include/statistics.h"
 
 char *format_bytes(uint64_t bytes) {
     static char buffer[32];
+    memset(buffer, 0, sizeof(buffer));
     const char *units[] = {"B", "KB", "MB", "GB", "TB"};
     int unit_index = 0;
     double size = bytes;
@@ -120,4 +122,13 @@ void list_interfaces(void) {
 
 void cleanup_resources(void) {
     printf("Очистка ресурсов...\n");
+}
+
+void cleanup_network_analyzer(pcap_t *handle, stats_collector_t *collector) {
+    if (collector) {
+        destroy_stats_collector(collector);
+    }
+    if (handle) {
+        pcap_close(handle);
+    }
 } 
